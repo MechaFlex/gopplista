@@ -1,0 +1,36 @@
+<div class="p-2 b-solid b-2 b-zinc-900 hover:bg-zinc-900 hover:text-zinc-50">
+   <h1>All games</h1>
+   <ol class="ALL_GAMES flex flex-col gap-2">
+      {{range .Games}}
+      <li class="flex justify-between items-center">
+         {{.Title}} {{template "routes/admin/games/gamecontrols" .}}
+      </li>
+      {{end}}
+   </ol>
+</div>
+
+<button
+   onclick="(() => {
+      const dialog = document.querySelector('.DIALOG_GAME_ADD')
+      dialog.querySelector('input[name=sectionid]').value = '{{.ID}}'
+      dialog.showModal()
+   })()"
+>
+   Add game
+</button>
+
+<script type="module">
+   import Sortable from "https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/+esm"
+
+   const allGames = document.querySelectorAll(".ALL_GAMES")
+   allGames.forEach((game) => {
+      new Sortable(game, {
+         animation: 200,
+         group: {
+            name: "games",
+            pull: "clone",
+            put: false,
+         },
+      })
+   })
+</script>

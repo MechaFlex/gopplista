@@ -1,0 +1,20 @@
+<div class="flex gap-8">
+   <section b="solid green">{{template "routes/admin/games/games" .}}</section>
+
+   <section b="solid red" class="py-8 flex flex-col gap-4">
+      {{template "routes/admin/games/sections" .}}
+
+      <button
+         class="text-[1.5rem]"
+         onclick="document.querySelector('.DIALOG_SECTION_ADD').showModal()"
+      >
+         Add section
+      </button>
+
+      {{template "routes/admin/games/addsection"}}
+
+      <br />
+
+      {{template "routes/admin/games/addgame"}}
+   </section>
+</div>

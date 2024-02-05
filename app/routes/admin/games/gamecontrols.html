@@ -1,0 +1,33 @@
+<div class="CONTROLS relative">
+   <button
+      class="ELLIPSIS i-heroicons-ellipsis-horizontal relative opacity-0 cursor-pointer text-[2rem]"
+   ></button>
+   <div class="GAME_MENU z-10 absolute hidden w-max h-max text-zinc-50">
+      <div class="relative flex flex-col [&>*]-flex [&>*]-items-center [&>*]-gap-2">
+         <button
+            onclick="(() => {
+            const dialog = document.querySelector('.DIALOG_GAME_EDIT')
+            dialog.querySelector('input[name=id]').value = '{{.ID}}'
+            dialog.querySelector('input[name=title]').value = '{{.Title}}'
+            dialog.querySelector('textarea[name=description]').value = '{{.Description}}'
+            dialog.querySelector('input[name=release_year]').value = '{{.ReleaseYear}}'
+            dialog.showModal()
+         })()"
+         >
+            <div class="i-heroicons-pencil"></div>
+            Edit game
+         </button>
+         <button
+            class="text-red-600 hover:bg-red-600 hover:text-zinc-50"
+            hx-delete="/admin/games/{{.ID}}"
+            hx-swap="outerHTML"
+            hx-trigger="click"
+            hx-target=".ALL_GAMES"
+            hx-confirm="Are you sure you want to delete game {{.Title}}?"
+         >
+            <div class="i-heroicons-trash"></div>
+            Delete game
+         </button>
+      </div>
+   </div>
+</div>

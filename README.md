@@ -1,7 +1,8 @@
-To get unocss working in development, run `npm install unocss`
+## Development
 
-To develop with live reload, use Air. Install Air, and run air init, then run `air`. 
+To get unocss working in development, run `npm i -d unocss`
 
+To develop with live reload, use Air. Install Air, then run `air`. 
 
 ## Tech stack
 
