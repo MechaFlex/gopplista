@@ -1,5 +1,15 @@
 {
   "printWidth": 100,
   "tabWidth": 3,
-  "semi": false
+  "semi": false,
+  "plugins": ["prettier-plugin-go-template"],
+  "goTemplateBracketSpacing": false,
+  "overrides": [
+    {
+      "files": ["*.html"],
+      "options": {
+        "parser": "go-template"
+      }
+    }
+  ]
 }

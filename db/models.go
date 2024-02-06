@@ -9,7 +9,7 @@ type Game struct {
 	Genre       string `gorm:"notnull"`
 	ReleaseYear int    `gorm:"notnull"`
 	ImageURL    string `gorm:"notnull"`
-	Score       int    `gorm:"notnull"`
+	Rating      int    `gorm:"notnull"`
 }
 
 type GameSection struct {

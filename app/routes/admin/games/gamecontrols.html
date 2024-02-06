@@ -1,18 +1,13 @@
 <div class="CONTROLS relative">
    <button
-      class="ELLIPSIS i-heroicons-ellipsis-horizontal relative opacity-0 cursor-pointer text-[2rem]"
+      class="ELLIPSIS ELLIPSIS{{.ID}} i-heroicons-ellipsis-horizontal relative opacity-0 cursor-pointer text-[2rem] text-green-500"
    ></button>
-   <div class="GAME_MENU z-10 absolute hidden w-max h-max text-zinc-50">
+   <div class="GAME_MENU GAME_MENU{{.ID}} z-10 absolute hidden w-max h-max text-zinc-800">
       <div class="relative flex flex-col [&>*]-flex [&>*]-items-center [&>*]-gap-2">
          <button
-            onclick="(() => {
-            const dialog = document.querySelector('.DIALOG_GAME_EDIT')
-            dialog.querySelector('input[name=id]').value = '{{.ID}}'
-            dialog.querySelector('input[name=title]').value = '{{.Title}}'
-            dialog.querySelector('textarea[name=description]').value = '{{.Description}}'
-            dialog.querySelector('input[name=release_year]').value = '{{.ReleaseYear}}'
-            dialog.showModal()
-         })()"
+            hx-get="/admin/games/dialog/edit/{{.ID}}"
+            hx-target=".DIALOG_GAME"
+            hx-on::after-request="document.querySelector('.DIALOG_GAME').showModal()"
          >
             <div class="i-heroicons-pencil"></div>
             Edit game
@@ -31,3 +26,16 @@
       </div>
    </div>
 </div>
+
+<script>
+   window.addEventListener("click", (event) => {
+      const gameMenu = document.querySelector(".GAME_MENU{{.ID}}")
+      gameMenu.classList.add("hidden")
+      gameMenu.classList.remove("block")
+
+      if (event.target.classList.contains("ELLIPSIS{{.ID}}")) {
+         gameMenu.classList.add("block")
+         gameMenu.classList.remove("hidden")
+      }
+   })
+</script>

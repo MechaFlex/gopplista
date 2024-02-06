@@ -16,14 +16,23 @@ export class RatingLines extends LitElement {
       }
       .filled {
          background-color: white;
+         &.dark {
+            background-color: black;
+         }
       }
       .unfilled {
          background-color: white;
          opacity: 0.3;
+         &.dark {
+            background-color: black;
+         }
       }
       .pointer:hover {
          cursor: pointer;
          opacity: 0.7;
+         &.dark {
+            opacity: 0.5;
+         }
       }
    `
 
@@ -31,6 +40,7 @@ export class RatingLines extends LitElement {
       rating: { type: Number },
       maxrating: { type: Number },
       readonly: { type: Boolean },
+      dark: { type: Boolean },
    }
 
    constructor() {
@@ -43,7 +53,7 @@ export class RatingLines extends LitElement {
       if (this.readonly) return
       if (this.rating === 1 && rating === 1) rating = 0
       this.rating = rating
-      //this.dispatchEvent(new CustomEvent("change", { detail: rating }))
+      this.dispatchEvent(new CustomEvent("change", { detail: rating }))
    }
 
    render() {
@@ -53,7 +63,10 @@ export class RatingLines extends LitElement {
                { length: this.rating },
                (_, i) =>
                   html`<span
-                     class="line filled ${!this.readonly && "pointer"}"
+                     class="line filled 
+                        ${!this.readonly && "pointer"} 
+                        ${this.dark && "dark"}
+                     "
                      @click=${() => this.setRating(i + 1)}
                   ></span>`
             )}
@@ -61,7 +74,10 @@ export class RatingLines extends LitElement {
                { length: this.maxrating - this.rating },
                (_, i) =>
                   html`<span
-                     class="line unfilled ${!this.readonly && "pointer"}"
+                     class="line unfilled
+                        ${!this.readonly && "pointer"}
+                        ${this.dark && "dark"}
+                     "
                      @click=${() => this.setRating(i + this.rating + 1)}
                   ></span>`
             )}

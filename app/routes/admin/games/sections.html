@@ -1,26 +1,20 @@
-{{template "routes/admin/games/editsection"}}
+<section b="solid red" class="py-8 flex flex-col gap-4">
+   <dialog
+      class="DIALOG_SECTION w-[30rem] bg-zinc-50"
+      onclick="document.querySelector('.DIALOG_SECTION').close()"
+   ></dialog>
 
-<ol class="SECTIONS flex flex-col gap-6">
-   {{range .Sections}}
-   <li data-id="{{.ID}}" class="SECTION flex flex-col p-2 b-solid b-2 b-zinc-900">
-      <div class="flex justify-between items-center cursor-ns-resize">
-         <h2>{{.Title}}</h2>
+   {{template "routes/admin/games/sectionslist" .}}
 
-         {{template "routes/admin/games/sectioncontrols" .}}
-      </div>
-      <ol class="GAMES">
-         {{range .Games}}
-         <li
-            data-id="{{.ID}}"
-            class="flex justify-between items-center px-2 hover:bg-zinc-50 hover:text-zinc-800 cursor-ns-resize"
-         >
-            {{.Title}} {{template "routes/admin/games/gameinsectioncontrols" .}}
-         </li>
-         {{end}}
-      </ol>
-   </li>
-   {{end}}
-</ol>
+   <button
+      class="text-[1.5rem]"
+      hx-get="/admin/games/sections/dialog/add"
+      hx-target=".DIALOG_SECTION"
+      hx-on::after-request="document.querySelector('.DIALOG_SECTION').showModal()"
+   >
+      Add section
+   </button>
+</section>
 
 <style>
    /* When hovering over a section, but not when hovering over the menu */
@@ -40,42 +34,25 @@
 <script type="module">
    import Sortable from "https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/+esm"
 
-   const sections = document.querySelector(".SECTIONS")
-   new Sortable(sections, {
-      animation: 200,
-   })
-
-   const games = document.querySelectorAll(".GAMES")
-   games.forEach((game) => {
-      new Sortable(game, {
+   htmx.onLoad(function (content) {
+      const sections = document.querySelector(".SECTIONS")
+      new Sortable(sections, {
          animation: 200,
-         group: "games",
+         onEnd: function (event) {
+            console.log("logging from sections", event)
+            this.option("disabled", true)
+         },
+      })
+
+      const games = document.querySelectorAll(".GAMES")
+      games.forEach((game) => {
+         new Sortable(game, {
+            animation: 200,
+            group: "games",
+            onEnd: function (event) {
+               console.log("logging from games", event)
+            },
+         })
       })
    })
-
-   window.onclick = (event) => {
-      const sectionMenus = document.querySelectorAll(".SECTION_MENU")
-      sectionMenus.forEach((sectionMenu) => {
-         sectionMenu.classList.add("hidden")
-         sectionMenu.classList.remove("block")
-      })
-
-      if (event.target.classList.contains("ELLIPSIS")) {
-         const sectionMenu = event.target.parentElement.querySelector(".SECTION_MENU")
-         sectionMenu.classList.add("block")
-         sectionMenu.classList.remove("hidden")
-      }
-
-      const gameMenus = document.querySelectorAll(".GAME_MENU")
-      gameMenus.forEach((gameMenu) => {
-         gameMenu.classList.add("hidden")
-         gameMenu.classList.remove("block")
-      })
-
-      if (event.target.classList.contains("ELLIPSIS")) {
-         const gameMenu = event.target.parentElement.querySelector(".GAME_MENU")
-         gameMenu.classList.add("block")
-         gameMenu.classList.remove("hidden")
-      }
-   }
 </script>

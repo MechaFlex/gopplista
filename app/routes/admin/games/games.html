@@ -1,23 +1,37 @@
-<div class="p-2 b-solid b-2 b-zinc-900 hover:bg-zinc-900 hover:text-zinc-50">
-   <h1>All games</h1>
-   <ol class="ALL_GAMES flex flex-col gap-2">
-      {{range .Games}}
-      <li class="flex justify-between items-center">
-         {{.Title}} {{template "routes/admin/games/gamecontrols" .}}
-      </li>
-      {{end}}
-   </ol>
-</div>
+<section b="solid green">
+   <dialog
+      class="DIALOG_GAME w-[30rem] bg-zinc-50"
+      onclick="document.querySelector('.DIALOG_GAME').close()"
+   ></dialog>
 
-<button
-   onclick="(() => {
-      const dialog = document.querySelector('.DIALOG_GAME_ADD')
-      dialog.querySelector('input[name=sectionid]').value = '{{.ID}}'
-      dialog.showModal()
-   })()"
->
-   Add game
-</button>
+   <div class="p-2 b-solid b-2 b-zinc-900 hover:bg-zinc-900 hover:text-zinc-50">
+      <h1>All games</h1>
+      {{template "routes/admin/games/gameslist" .}}
+   </div>
+
+   <button
+      hx-get="/admin/games/dialog/add"
+      hx-target=".DIALOG_GAME"
+      hx-on::after-request="document.querySelector('.DIALOG_GAME').showModal()"
+   >
+      Add game
+   </button>
+</section>
+
+<style>
+   /* When hovering over a section, but not when hovering over the menu */
+   .ALL_GAMES li:hover:not(:has(.SECTION_MENU:hover)) {
+      /* @apply bg-zinc-800; */
+      background-color: rgb(39 39 42);
+      /* @apply text-zinc-50; */
+      color: rgb(250 250 250);
+
+      .ELLIPSIS {
+         background-color: rgb(250 250 250);
+         opacity: 100%;
+      }
+   }
+</style>
 
 <script type="module">
    import Sortable from "https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/+esm"
@@ -26,11 +40,29 @@
    allGames.forEach((game) => {
       new Sortable(game, {
          animation: 200,
+         sort: false,
          group: {
             name: "games",
             pull: "clone",
             put: false,
          },
+         onEnd: function (event) {
+            console.log("logging from all games", event)
+         },
       })
    })
+
+   // window.onclick = (event) => {
+   //    const gameMenus = document.querySelectorAll(".GAME_MENU")
+   //    gameMenus.forEach((gameMenu) => {
+   //       gameMenu.classList.add("hidden")
+   //       gameMenu.classList.remove("block")
+   //    })
+
+   //    if (event.target.classList.contains("ELLIPSIS")) {
+   //       const gameMenu = event.target.parentElement.querySelector(".GAME_MENU")
+   //       gameMenu.classList.add("block")
+   //       gameMenu.classList.remove("hidden")
+   //    }
+   // }
 </script>

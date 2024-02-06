@@ -1,0 +1,42 @@
+<ol
+   class="SECTIONS flex flex-col gap-6"
+   hx-put="/admin/games/sections"
+   hx-swap="outerHTML"
+   hx-trigger="end"
+   hx-include="input[name=section]"
+>
+   {{range .Sections}}
+      <li class="SECTION flex flex-col p-2 b-solid b-2 b-zinc-900">
+         <input type="hidden" name="section" value="{{.ID}}" />
+         <div class="flex justify-between items-center cursor-ns-resize">
+            <h2>{{.Title}}</h2>
+            {{template "routes/admin/games/sectioncontrols" .}}
+         </div>
+         <form
+            hx-put="/admin/games/sections/{{.ID}}/games"
+            hx-trigger="start"
+            hx-swap="none"
+            hx-include="input[name=game]"
+         >
+            <ol
+               class="GAMES"
+               hx-put="/admin/games/sections/{{.ID}}/games"
+               hx-trigger="end"
+               hx-target=".SECTIONS"
+               hx-swap="outerHTML"
+               hx-include="input[name=game]"
+            >
+               {{range .Games}}
+                  <li
+                     class="flex justify-between items-center px-2 hover:bg-zinc-50 hover:text-zinc-800 cursor-ns-resize"
+                  >
+                     <input type="hidden" name="game" value="{{.ID}}" />
+                     {{.Title}}
+                     {{template "routes/admin/games/gameinsectioncontrols" .}}
+                  </li>
+               {{end}}
+            </ol>
+         </form>
+      </li>
+   {{end}}
+</ol>
