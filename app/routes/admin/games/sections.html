@@ -49,8 +49,11 @@
          new Sortable(game, {
             animation: 200,
             group: "games",
+            onStart: function (event) {
+               console.log("logging from games, start", event)
+            },
             onEnd: function (event) {
-               console.log("logging from games", event)
+               console.log("logging from games, end", event)
             },
          })
       })

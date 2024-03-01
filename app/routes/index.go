@@ -1,20 +1,18 @@
 package routes
 
 import (
-	"gopplista/app/routes/admin"
 	"gopplista/app/routes/games"
-	"gopplista/app/routes/movies"
+	"gopplista/db"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
 
-func RegisterRoutes(router fiber.Router, db *gorm.DB) {
+func RegisterRoutes(router fiber.Router, db db.Database) {
 
-	admin.RegisterAdminRoutes(router.Group("/admin"), db)
+	//admin.RegisterAdminRoutes(router.Group("/admin"), db)
 
 	games.RegisterGameRoutes(router.Group("/games"), db)
-	movies.RegisterMovieRoutes(router.Group("/movies"), db)
+	//movies.RegisterMovieRoutes(router.Group("/movies"), db)
 
 	router.Get("/", func(c *fiber.Ctx) error {
 

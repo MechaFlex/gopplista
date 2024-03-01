@@ -2,8 +2,9 @@
   "printWidth": 100,
   "tabWidth": 3,
   "semi": false,
-  "plugins": ["prettier-plugin-go-template"],
+  "plugins": ["prettier-plugin-go-template", "prettier-plugin-sql"],
   "goTemplateBracketSpacing": false,
+  "language": "sqlite",
   "overrides": [
     {
       "files": ["*.html"],

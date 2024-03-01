@@ -1,6 +1,6 @@
 ## Development
 
-To get unocss working in development, run `npm i -d unocss`
+First run `npm i` to install dev dependencies. This project uses UnoCSS and Prettier.
 
 To develop with live reload, use Air. Install Air, then run `air`. 
 

@@ -1,4 +1,11 @@
-<ol class="ALL_GAMES flex flex-col gap-2">
+<ol
+   class="ALL_GAMES flex flex-col gap-2"
+   hx-put="/admin/games/sections/games"
+   hx-trigger="end"
+   hx-target=".SECTIONS"
+   hx-swap="outerHTML"
+   hx-include="input[name=game]"
+>
    {{range .Games}}
       <li class="flex justify-between items-center px-2">
          {{.Title}}

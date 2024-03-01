@@ -2,14 +2,13 @@ package admin
 
 import (
 	"fmt"
-	dbpkg "gopplista/db"
+	"gopplista/db"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
 
-func RegisterAdminRoutes(router fiber.Router, db *gorm.DB) {
+func RegisterAdminRoutes(router fiber.Router, db db.Database) {
 
 	// router.Use(func(c *fiber.Ctx) error {
 	// 	if c.Cookies("admin") != "true" {
@@ -117,33 +116,35 @@ func RegisterAdminRoutes(router fiber.Router, db *gorm.DB) {
 		})
 	})
 
-	router.Put("/games/sections/:sectionid/games", func(c *fiber.Ctx) error {
+	router.Put("/games/sections/games", func(c *fiber.Ctx) error {
 
-		payload := struct {
-			GameIDs []string `form:"game"`
-		}{}
+		// payload := struct {
+		// 	GameIDs []string `form:"game"`
+		// }{}
 
-		err := c.BodyParser(&payload)
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Print(payload)
+		// err := c.BodyParser(&payload)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// }
+		// fmt.Print(payload)
 
-		var gameSectionGames []dbpkg.GameSectionGames
-		db.Where("game_section_id = ?", c.Params("sectionid")).Delete(&gameSectionGames)
+		// var gameSectionGames []dbpkg.GameSectionGames
+		// db.Where("game_section_id = ?", c.Params("sectionid")).Delete(&gameSectionGames)
 
-		for i, gameid := range payload.GameIDs {
-			var gameSectionGames dbpkg.GameSectionGames
+		// for i, gameid := range payload.GameIDs {
+		// 	var gameSectionGames dbpkg.GameSectionGames
 
-			gameSectionGames.GameSectionID = c.Params("sectionid")
-			gameSectionGames.GameID = gameid
-			gameSectionGames.OrderInSection = i
+		// 	gameSectionGames.GameSectionID = c.Params("sectionid")
+		// 	gameSectionGames.GameID = gameid
+		// 	gameSectionGames.OrderInSection = i
 
-			db.Save(&gameSectionGames)
-		}
+		// 	db.Save(&gameSectionGames)
+		// }
 
 		var updatedGameSections []dbpkg.GameSection
 		db.Preload("Games").Order("order_on_page").Find(&updatedGameSections)
+
+		fmt.Println(updatedGameSections)
 
 		return c.Render("routes/admin/games/sectionslist", fiber.Map{
 			"Sections": updatedGameSections,
