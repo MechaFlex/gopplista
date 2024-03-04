@@ -27,6 +27,7 @@ Go html templates with htmx and unocss.
 
 ```
 ENV=dev # if you are in development
+SEED_DATABASE=true # if you want to populate the database with some predefined data
 ADMIN_PASSWORD=<password>
 ```
 

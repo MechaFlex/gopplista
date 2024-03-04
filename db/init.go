@@ -4,15 +4,13 @@ import (
 	"context"
 	"database/sql"
 	_ "embed"
+	"os"
 
 	_ "github.com/glebarez/go-sqlite"
 )
 
 //go:embed schema/games.sql
 var gamesSchema string
-
-//go:embed seed.sql
-var seed string
 
 type Database struct {
 	Ctx     context.Context
@@ -32,10 +30,9 @@ func Init() (Database, error) {
 		return Database{}, err
 	}
 
-	// _, err = database.ExecContext(ctx, seed)
-	// if err != nil {
-	// 	return Database{}, err
-	// }
+	if os.Getenv("SEED_DATABASE") == "true" {
+		seedDatabase()
+	}
 
 	queries := New(database)
 
