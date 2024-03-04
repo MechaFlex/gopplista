@@ -1,15 +1,19 @@
-<li class="bg-gray-9 text-gray-1 flex h-[20rem] w-full overflow-hidden">
-   <img src="{{.Imageurl}}" alt="{{.Title}}" class="h-full" />
-   <div class="grow flex flex-col gap-4 px-6 py-4">
-      <div class="w-full">
-         <rating-lines maxrating="5" rating="{{.Rating}}" readonly></rating-lines>
-      </div>
+<li
+	class="bg-gray-900 text-gray-100 p-6 gap-4 grid grid-cols-[10rem_auto] items-start w-full max-w-[75rem]"
+	md="p-0 gap-0 grid-cols-[15rem_auto] grid-rows-[auto_1fr]"
+>
+	<img src="{{.ImageUrl}}" alt="{{.Title}}" class="w-full" md="row-span-2" />
 
-      <h1 class="font-700">{{.Title}}</h1>
-      <div>
-         {{.Description}}
-         <br />
-         <strong>Released:</strong> {{.Releaseyear}}
-      </div>
-   </div>
+	<div class="w-full" md="h-full p-6">
+		<rating-lines maxrating="5" rating="{{.Rating}}" readonly></rating-lines>
+
+		<h1 class="font-700 text-[1.5rem]">{{.Title}}</h1>
+		<p>{{.ReleaseYear}}, {{.Genre}}</p>
+	</div>
+
+	<div class="col-span-2" md="col-auto p-6 pt-0">
+		<p class="text-justify">
+			{{.Description}}
+		</p>
+	</div>
 </li>

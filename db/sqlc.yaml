@@ -1,9 +1,12 @@
 version: "2"
 sql:
-  - engine: "sqlite"
-    queries: "query"
-    schema: "schema"
-    gen:
-      go:
-        package: "db"
-        out: "gen"
+   - engine: "sqlite"
+     queries: "query"
+     schema: "schema"
+     gen:
+        go:
+           package: "db"
+           out: "/"
+           output_files_suffix: "cgen"
+           output_db_file_name: "sqlcgen-db.go"
+           output_models_file_name: "sqlcgen-models.go"

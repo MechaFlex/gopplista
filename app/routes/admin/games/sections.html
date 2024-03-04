@@ -1,61 +1,108 @@
-<section b="solid red" class="py-8 flex flex-col gap-4">
-   <dialog
-      class="DIALOG_SECTION w-[30rem] bg-zinc-50"
-      onclick="document.querySelector('.DIALOG_SECTION').close()"
-   ></dialog>
+<section class="py-8 flex flex-col gap-4">
+	<dialog
+		id="DIALOG_SECTION"
+		class="w-[30rem] bg-zinc-50"
+		onclick="document.querySelector('#DIALOG_SECTION').close()"
+	></dialog>
 
-   {{template "routes/admin/games/sectionslist" .}}
+	{{template "routes/admin/games/sectionslist" .}}
 
-   <button
-      class="text-[1.5rem]"
-      hx-get="/admin/games/sections/dialog/add"
-      hx-target=".DIALOG_SECTION"
-      hx-on::after-request="document.querySelector('.DIALOG_SECTION').showModal()"
-   >
-      Add section
-   </button>
+	<button
+		class="text-[1.5rem]"
+		hx-get="/admin/games/sections/dialog/add"
+		hx-target="#DIALOG_SECTION"
+		hx-swap="innerHTML"
+		hx-on::after-request="document.querySelector('#DIALOG_SECTION').showModal()"
+	>
+		Add section
+	</button>
+
+	<style>
+		/* When hovering over a section, but not when hovering over the menu */
+		.SECTION:hover:not(:has(.MENU_SECTION:hover)) {
+			/* @apply bg-zinc-900; */
+			background-color: rgb(24 24 27);
+			/* @apply text-zinc-50; */
+			color: rgb(250 250 250);
+
+			.ELLIPSIS {
+				background-color: rgb(250 250 250);
+				opacity: 100%;
+			}
+		}
+
+		.GAME_IN_SECTION:hover:not(:has(.MENU_SECTION:hover)) {
+			/* @apply bg-zinc-800; */
+			background-color: rgb(39 39 42);
+			/* @apply text-zinc-50; */
+			color: rgb(250 250 250);
+
+			.ELLIPSIS {
+				background-color: rgb(250 250 250);
+				opacity: 100%;
+			}
+		}
+	</style>
+
+	<script type="module">
+		import Sortable from "https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/+esm"
+
+		htmx.onLoad(function (content) {
+			const sectionsList = document.querySelector("#SECTIONS_LIST")
+			new Sortable(sectionsList, {
+				animation: 200,
+				onEnd: function (event) {
+					this.option("disabled", true)
+
+					const sectionIDs = Array.from(event.to.children).map((el) => el.dataset.sectionId)
+
+					htmx.ajax("PUT", "/admin/games/sections", {
+						target: "#SECTIONS_LIST",
+						swap: "outerHTML",
+						values: {
+							section: sectionIDs,
+						},
+					})
+				},
+			})
+
+			const games = document.querySelectorAll(".GAMES_IN_SECTION")
+			games.forEach((game) => {
+				new Sortable(game, {
+					animation: 200,
+					group: "games",
+					onEnd: async function (event) {
+						this.option("disabled", true)
+
+						const fromSectionId = event.from.dataset.sectionId
+						const fromGameId = event.item.dataset.gameId
+
+						fetch(`/admin/games/sections/${fromSectionId}/${fromGameId}`, {
+							method: "DELETE",
+						}).then((res) => {
+							if (!res.ok) console.error(res.text())
+
+							updateGamesInSection(event)
+						})
+					},
+				})
+			})
+		})
+
+		window.updateGamesInSection = updateGamesInSection
+		function updateGamesInSection(event) {
+			const sectionId = event.to.dataset.sectionId
+			if (!sectionId) return console.warn("No section id")
+
+			const gameIds = Array.from(event.to.children).map((el) => el.dataset.gameId)
+
+			console.log("writing these games:", gameIds)
+
+			htmx.ajax("PUT", `/admin/games/sections/${sectionId}/games`, {
+				target: "#SECTIONS_LIST",
+				swap: "outerHTML",
+				values: { game: gameIds },
+			})
+		}
+	</script>
 </section>
-
-<style>
-   /* When hovering over a section, but not when hovering over the menu */
-   .SECTION:hover:not(:has(.SECTION_MENU:hover)) {
-      /* @apply bg-zinc-800; */
-      background-color: rgb(39 39 42);
-      /* @apply text-zinc-50; */
-      color: rgb(250 250 250);
-
-      .ELLIPSIS {
-         background-color: rgb(250 250 250);
-         opacity: 100%;
-      }
-   }
-</style>
-
-<script type="module">
-   import Sortable from "https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/+esm"
-
-   htmx.onLoad(function (content) {
-      const sections = document.querySelector(".SECTIONS")
-      new Sortable(sections, {
-         animation: 200,
-         onEnd: function (event) {
-            console.log("logging from sections", event)
-            this.option("disabled", true)
-         },
-      })
-
-      const games = document.querySelectorAll(".GAMES")
-      games.forEach((game) => {
-         new Sortable(game, {
-            animation: 200,
-            group: "games",
-            onStart: function (event) {
-               console.log("logging from games, start", event)
-            },
-            onEnd: function (event) {
-               console.log("logging from games, end", event)
-            },
-         })
-      })
-   })
-</script>

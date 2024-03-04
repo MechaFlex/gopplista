@@ -1,5 +1,9 @@
-<div class="flex gap-8">
-   {{template "routes/admin/games/games" .}}
+<a class="fixed top-0 left-0 p-6" href="/">
+	<div class="i-heroicons-arrow-left inline-block"></div>
+	Go back
+</a>
+<div class="GAMES_INDEX flex gap-8">
+	{{template "routes/admin/games/games" .}}
 
-   {{template "routes/admin/games/sections" .}}
+	{{template "routes/admin/games/sections" .}}
 </div>

@@ -1,8 +1,12 @@
 {
-  "devDependencies": {
-    "prettier": "^3.2.5",
-    "prettier-plugin-go-template": "^0.0.15",
-    "prettier-plugin-sql": "^0.18.0",
-    "unocss": "^0.58.5"
-  }
+	"scripts": {
+		"build": "cd ./app/static && unocss \"../**/*.html\""
+	},
+	"devDependencies": {
+		"@iconify-json/heroicons": "^1.1.20",
+		"prettier": "^3.2.5",
+		"prettier-plugin-go-template": "^0.0.15",
+		"prettier-plugin-sql": "^0.18.0",
+		"unocss": "^0.58.5"
+	}
 }

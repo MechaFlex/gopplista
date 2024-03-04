@@ -1,15 +1,11 @@
-<ol
-   class="ALL_GAMES flex flex-col gap-2"
-   hx-put="/admin/games/sections/games"
-   hx-trigger="end"
-   hx-target=".SECTIONS"
-   hx-swap="outerHTML"
-   hx-include="input[name=game]"
->
-   {{range .Games}}
-      <li class="flex justify-between items-center px-2">
-         {{.Title}}
-         {{template "routes/admin/games/gamecontrols" .}}
-      </li>
-   {{end}}
+<ol id="GAMES_LIST" class="flex flex-col">
+	{{range .Games}}
+		<li
+			class="GAME flex justify-between items-center p-2 cursor-grab active:cursor-grabbing"
+			data-game-id="{{.ID}}"
+		>
+			{{.Title}}
+			{{template "routes/admin/games/menugame" .}}
+		</li>
+	{{end}}
 </ol>

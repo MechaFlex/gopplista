@@ -1,16 +1,17 @@
 {
-  "printWidth": 100,
-  "tabWidth": 3,
-  "semi": false,
-  "plugins": ["prettier-plugin-go-template", "prettier-plugin-sql"],
-  "goTemplateBracketSpacing": false,
-  "language": "sqlite",
-  "overrides": [
-    {
-      "files": ["*.html"],
-      "options": {
-        "parser": "go-template"
-      }
-    }
-  ]
+	"printWidth": 100,
+	"tabWidth": 3,
+	"useTabs": true,
+	"semi": false,
+	"plugins": ["prettier-plugin-go-template", "prettier-plugin-sql"],
+	"goTemplateBracketSpacing": false,
+	"language": "sqlite",
+	"overrides": [
+		{
+			"files": ["*.html"],
+			"options": {
+				"parser": "go-template"
+			}
+		}
+	]
 }

@@ -1,0 +1,38 @@
+<div class="relative">
+	<button
+		class="ELLIPSIS ELLIPSIS{{.}} i-heroicons-ellipsis-horizontal relative opacity-0 cursor-pointer text-[2rem]"
+	></button>
+	<div
+		class="MENU_SECTION MENU_GAME_IN_SECTION{{.}} z-10 absolute hidden w-max h-max text-zinc-50"
+	>
+		<div class="relative flex flex-col [&>*]-flex [&>*]-items-center [&>*]-gap-2">
+			<button
+				class="text-red-600 hover:bg-red-600 hover:text-zinc-50"
+				hx-delete="/admin/games/sections/{{.}}"
+				hx-swap="outerHTML"
+				hx-trigger="click"
+				hx-target="#SECTIONS_LIST"
+				hx-on::config-request="event.detail.path = event.detail.path.replace('-', '/')"
+			>
+				<div class="i-heroicons-trash"></div>
+				Remove game from section
+			</button>
+		</div>
+	</div>
+</div>
+
+<script>
+   window.addEventListener("click", (event) => {
+      const gameInSectionMenu = document.querySelector(".MENU_GAME_IN_SECTION{{.}}")
+      if (gameInSectionMenu.classList.contains("block")) {
+         gameInSectionMenu.classList.add("hidden")
+         gameInSectionMenu.classList.remove("block")
+         return
+      }
+
+      if (event.target.classList.contains("ELLIPSIS{{.}}")) {
+         gameInSectionMenu.classList.add("block")
+         gameInSectionMenu.classList.remove("hidden")
+      }
+   })
+</script>

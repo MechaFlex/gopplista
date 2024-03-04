@@ -2,42 +2,23 @@ package games
 
 import (
 	"fmt"
-	dbpkg "gopplista/db"
-	models "gopplista/db/gen"
+	"gopplista/db"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type GameSectionWithGames struct {
-	models.GameSection
-	Games []models.Game
-}
-
-func RegisterGameRoutes(router fiber.Router, db dbpkg.Database) {
+func RegisterGameRoutes(router fiber.Router, db db.Database) {
 
 	router.Get("/", func(c *fiber.Ctx) error {
 
-		sections, err := db.Queries.GetGameSections(db.Ctx)
+		gameSectionsWithGames, err := db.Queries.GetGameSectionsWithGames(db.Ctx)
 		if err != nil {
-			return err
+			return c.Status(500).SendString(fmt.Sprintf("Error getting game sections with games: %v", err))
 		}
-
-		sectionsWithGames := []GameSectionWithGames{}
-
-		for _, section := range sections {
-			games, err := db.Queries.GetGamesInGameSection(db.Ctx, section.ID)
-			if err != nil {
-				return err
-			}
-			sectionsWithGames = append(sectionsWithGames, GameSectionWithGames{section, games})
-		}
-
-		fmt.Println(sectionsWithGames)
-
-		fmt.Println("games:", sectionsWithGames[0].Games)
 
 		return c.Render("routes/games/games", fiber.Map{
-			"Sections": sectionsWithGames,
+			"PageTitle": "Spel | Jacobs topplista",
+			"Sections":  gameSectionsWithGames,
 		}, "layouts/main", "layouts/base")
 	})
 }

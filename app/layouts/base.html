@@ -1,33 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-   <head>
-      <link rel="stylesheet" href="reset.css" />
-      <link rel="stylesheet" href="utility.css" />
-      <link rel="stylesheet" href="global.css" />
+	<head>
+		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
-      <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+		<link rel="stylesheet" href="/reset.css" />
+		<link rel="stylesheet" href="/global.css" />
 
-      <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/attributify.global.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/preset-icons.global.js"></script>
-      <script>
-         window.__unocss = {
-            presets: [
-               () =>
-                  window.__unocss_runtime.presets.presetIcons({
-                     cdn: "https://esm.sh/",
-                  }),
-            ],
-         }
-      </script>
-      <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/core.global.js"></script>
+		{{if .Development}}
+			<script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/attributify.global.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/preset-icons.global.js"></script>
+			<script>
+				window.__unocss = {
+					presets: [
+						() =>
+							window.__unocss_runtime.presets.presetIcons({
+								cdn: "https://esm.sh/",
+							}),
+					],
+				}
+			</script>
+			<script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/core.global.js"></script>
+		{{else}}
+			<link rel="stylesheet" href="/uno.css" />
+		{{end}}
 
-      <script type="module" src="components/components.js"></script>
 
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>GOPPLISTA</title>
-   </head>
-   <body>
-      {{embed}}
-   </body>
+		<script type="module" src="/components/components.js"></script>
+
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{{or .PageTitle "Jacobs topplista"}}</title>
+	</head>
+	<body>
+		{{if .Development}}
+			<div
+				class="fixed left-0 bottom-0 p-6 bg-black/70 text-white text-center rounded-tr z-10000"
+			>
+				<strong>Development</strong>
+			</div>
+		{{end}}
+		{{embed}}
+	</body>
 </html>

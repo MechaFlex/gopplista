@@ -1,0 +1,18 @@
+<div class="grid place-items-center h-screen">
+	<form
+		class="flex flex-col gap-4"
+		hx-post="/admin/login"
+		hx-swap="none"
+		hx-on::after-request="document.location.href = '/admin'"
+	>
+		<h1 class="text-[1.5rem]">Admin Login</h1>
+		<input class="p-2" type="password" placeholder="Password" name="password" />
+
+		<button
+			class="rounded px-4 py-3 text-center transition text-gray-50 bg-sky-800 hover:bg-sky-700 active:bg-sky-600"
+			type="submit"
+		>
+			Log in
+		</button>
+	</form>
+</div>

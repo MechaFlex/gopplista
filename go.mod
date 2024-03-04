@@ -1,15 +1,19 @@
 module gopplista
 
-go 1.21.5
+go 1.22.0
 
 require (
+	aidanwoods.dev/go-paseto v1.5.1
 	github.com/glebarez/go-sqlite v1.22.0
 	github.com/gofiber/fiber/v2 v2.52.0
+	github.com/joho/godotenv v1.5.1
 )
 
 require (
+	aidanwoods.dev/go-result v0.1.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	golang.org/x/crypto v0.20.0 // indirect
 	modernc.org/libc v1.37.6 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.7.2 // indirect
@@ -30,5 +34,5 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
 )

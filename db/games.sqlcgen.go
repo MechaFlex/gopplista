@@ -9,22 +9,22 @@ import (
 	"context"
 )
 
-const addGameToSection = `-- name: AddGameToSection :one
+const addGameToGameSection = `-- name: AddGameToGameSection :one
 INSERT INTO
    game_section_games (game_id, game_section_id, order_in_section)
 VALUES
    (?, ?, ?) RETURNING game_section_id, game_id, order_in_section
 `
 
-type AddGameToSectionParams struct {
+type AddGameToGameSectionParams struct {
 	GameID         string
 	GameSectionID  string
 	OrderInSection int64
 }
 
 // GAME SECTION'S GAMES
-func (q *Queries) AddGameToSection(ctx context.Context, arg AddGameToSectionParams) (GameSectionGame, error) {
-	row := q.db.QueryRowContext(ctx, addGameToSection, arg.GameID, arg.GameSectionID, arg.OrderInSection)
+func (q *Queries) AddGameToGameSection(ctx context.Context, arg AddGameToGameSectionParams) (GameSectionGame, error) {
+	row := q.db.QueryRowContext(ctx, addGameToGameSection, arg.GameID, arg.GameSectionID, arg.OrderInSection)
 	var i GameSectionGame
 	err := row.Scan(&i.GameSectionID, &i.GameID, &i.OrderInSection)
 	return i, err
@@ -90,32 +90,6 @@ func (q *Queries) CreateGame(ctx context.Context, arg CreateGameParams) (Game, e
 	return i, err
 }
 
-const createGameSection = `-- name: CreateGameSection :one
-INSERT INTO
-   game_sections (title, description, order_on_page)
-VALUES
-   (?, ?, ?) RETURNING id, title, description, order_on_page
-`
-
-type CreateGameSectionParams struct {
-	Title       string
-	Description string
-	OrderOnPage int64
-}
-
-// GAME SECTIONS
-func (q *Queries) CreateGameSection(ctx context.Context, arg CreateGameSectionParams) (GameSection, error) {
-	row := q.db.QueryRowContext(ctx, createGameSection, arg.Title, arg.Description, arg.OrderOnPage)
-	var i GameSection
-	err := row.Scan(
-		&i.ID,
-		&i.Title,
-		&i.Description,
-		&i.OrderOnPage,
-	)
-	return i, err
-}
-
 const deleteGame = `-- name: DeleteGame :one
 DELETE FROM games
 WHERE
@@ -135,79 +109,6 @@ func (q *Queries) DeleteGame(ctx context.Context, id string) (Game, error) {
 		&i.ImageUrl,
 	)
 	return i, err
-}
-
-const deleteGameSection = `-- name: DeleteGameSection :one
-DELETE FROM game_sections
-WHERE
-   id = ? RETURNING id, title, description, order_on_page
-`
-
-func (q *Queries) DeleteGameSection(ctx context.Context, id string) (GameSection, error) {
-	row := q.db.QueryRowContext(ctx, deleteGameSection, id)
-	var i GameSection
-	err := row.Scan(
-		&i.ID,
-		&i.Title,
-		&i.Description,
-		&i.OrderOnPage,
-	)
-	return i, err
-}
-
-const getAllGameSectionsWithGames = `-- name: GetAllGameSectionsWithGames :many
-SELECT
-   game_sections.id, game_sections.title, game_sections.description, game_sections.order_on_page, games.id, games.title, games.description, games.genre, games.release_year, games.rating, games.image_url
-FROM
-   game_sections
-   LEFT JOIN game_section_games ON game_sections.id = game_section_games.game_section_id
-   LEFT JOIN games ON game_section_games.game_id = games.id
-ORDER BY
-   game_sections.order_on_page,
-   game_section_games.order_in_section
-`
-
-type GetAllGameSectionsWithGamesRow struct {
-	ID          string
-	Title       string
-	Description string
-	OrderOnPage int64
-	Game        Game
-}
-
-func (q *Queries) GetAllGameSectionsWithGames(ctx context.Context) ([]GetAllGameSectionsWithGamesRow, error) {
-	rows, err := q.db.QueryContext(ctx, getAllGameSectionsWithGames)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetAllGameSectionsWithGamesRow
-	for rows.Next() {
-		var i GetAllGameSectionsWithGamesRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.Title,
-			&i.Description,
-			&i.OrderOnPage,
-			&i.Game.ID,
-			&i.Game.Title,
-			&i.Game.Description,
-			&i.Game.Genre,
-			&i.Game.ReleaseYear,
-			&i.Game.Rating,
-			&i.Game.ImageUrl,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
 
 const getGame = `-- name: GetGame :one
@@ -255,6 +156,38 @@ func (q *Queries) GetGameSection(ctx context.Context, id string) (GameSection, e
 	return i, err
 }
 
+const getGameSectionGames = `-- name: GetGameSectionGames :many
+SELECT
+   game_section_id, game_id, order_in_section
+FROM
+   game_section_games
+ORDER BY
+   order_in_section
+`
+
+func (q *Queries) GetGameSectionGames(ctx context.Context) ([]GameSectionGame, error) {
+	rows, err := q.db.QueryContext(ctx, getGameSectionGames)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GameSectionGame
+	for rows.Next() {
+		var i GameSectionGame
+		if err := rows.Scan(&i.GameSectionID, &i.GameID, &i.OrderInSection); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getGameSections = `-- name: GetGameSections :many
 SELECT
    id, title, description, order_on_page
@@ -298,7 +231,7 @@ SELECT
 FROM
    games
 ORDER BY
-   title
+   title COLLATE NOCASE
 `
 
 func (q *Queries) GetGames(ctx context.Context) ([]Game, error) {
@@ -375,23 +308,34 @@ func (q *Queries) GetGamesInGameSection(ctx context.Context, gameSectionID strin
 	return items, nil
 }
 
-const removeGameFromSection = `-- name: RemoveGameFromSection :one
+const removeGameFromGameSection = `-- name: RemoveGameFromGameSection :one
 DELETE FROM game_section_games
 WHERE
-   game_id = ?
-   AND game_section_id = ? RETURNING game_section_id, game_id, order_in_section
+   game_section_id = ?
+   AND game_id = ? RETURNING game_section_id, game_id, order_in_section
 `
 
-type RemoveGameFromSectionParams struct {
-	GameID        string
+type RemoveGameFromGameSectionParams struct {
 	GameSectionID string
+	GameID        string
 }
 
-func (q *Queries) RemoveGameFromSection(ctx context.Context, arg RemoveGameFromSectionParams) (GameSectionGame, error) {
-	row := q.db.QueryRowContext(ctx, removeGameFromSection, arg.GameID, arg.GameSectionID)
+func (q *Queries) RemoveGameFromGameSection(ctx context.Context, arg RemoveGameFromGameSectionParams) (GameSectionGame, error) {
+	row := q.db.QueryRowContext(ctx, removeGameFromGameSection, arg.GameSectionID, arg.GameID)
 	var i GameSectionGame
 	err := row.Scan(&i.GameSectionID, &i.GameID, &i.OrderInSection)
 	return i, err
+}
+
+const removeGamesFromGameSection = `-- name: RemoveGamesFromGameSection :exec
+DELETE FROM game_section_games
+WHERE
+   game_section_id = ?
+`
+
+func (q *Queries) RemoveGamesFromGameSection(ctx context.Context, gameSectionID string) error {
+	_, err := q.db.ExecContext(ctx, removeGamesFromGameSection, gameSectionID)
+	return err
 }
 
 const updateGame = `-- name: UpdateGame :one
@@ -444,8 +388,7 @@ const updateGameSection = `-- name: UpdateGameSection :one
 UPDATE game_sections
 SET
    title = ?,
-   description = ?,
-   order_on_page = ?
+   description = ?
 WHERE
    id = ? RETURNING id, title, description, order_on_page
 `
@@ -453,17 +396,11 @@ WHERE
 type UpdateGameSectionParams struct {
 	Title       string
 	Description string
-	OrderOnPage int64
 	ID          string
 }
 
 func (q *Queries) UpdateGameSection(ctx context.Context, arg UpdateGameSectionParams) (GameSection, error) {
-	row := q.db.QueryRowContext(ctx, updateGameSection,
-		arg.Title,
-		arg.Description,
-		arg.OrderOnPage,
-		arg.ID,
-	)
+	row := q.db.QueryRowContext(ctx, updateGameSection, arg.Title, arg.Description, arg.ID)
 	var i GameSection
 	err := row.Scan(
 		&i.ID,
@@ -474,24 +411,71 @@ func (q *Queries) UpdateGameSection(ctx context.Context, arg UpdateGameSectionPa
 	return i, err
 }
 
-const updateGameInSectionOrder = `-- name: updateGameInSectionOrder :one
-UPDATE game_section_games
-SET
-   order_in_section = ?
-WHERE
-   game_id = ?
-   AND game_section_id = ? RETURNING game_section_id, game_id, order_in_section
+const unsafeCreateGameSection = `-- name: unsafeCreateGameSection :one
+INSERT INTO
+   game_sections (title, description, order_on_page)
+VALUES
+   (?, ?, ?) RETURNING id, title, description, order_on_page
 `
 
-type updateGameInSectionOrderParams struct {
-	OrderInSection int64
-	GameID         string
-	GameSectionID  string
+type unsafeCreateGameSectionParams struct {
+	Title       string
+	Description string
+	OrderOnPage int64
 }
 
-func (q *Queries) updateGameInSectionOrder(ctx context.Context, arg updateGameInSectionOrderParams) (GameSectionGame, error) {
-	row := q.db.QueryRowContext(ctx, updateGameInSectionOrder, arg.OrderInSection, arg.GameID, arg.GameSectionID)
-	var i GameSectionGame
-	err := row.Scan(&i.GameSectionID, &i.GameID, &i.OrderInSection)
+// GAME SECTIONS_LIST
+func (q *Queries) unsafeCreateGameSection(ctx context.Context, arg unsafeCreateGameSectionParams) (GameSection, error) {
+	row := q.db.QueryRowContext(ctx, unsafeCreateGameSection, arg.Title, arg.Description, arg.OrderOnPage)
+	var i GameSection
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.OrderOnPage,
+	)
+	return i, err
+}
+
+const unsafeDeleteGameSection = `-- name: unsafeDeleteGameSection :one
+DELETE FROM game_sections
+WHERE
+   id = ? RETURNING id, title, description, order_on_page
+`
+
+func (q *Queries) unsafeDeleteGameSection(ctx context.Context, id string) (GameSection, error) {
+	row := q.db.QueryRowContext(ctx, unsafeDeleteGameSection, id)
+	var i GameSection
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.OrderOnPage,
+	)
+	return i, err
+}
+
+const unsafeUpdateGameSectionOrder = `-- name: unsafeUpdateGameSectionOrder :one
+UPDATE game_sections
+SET
+   order_on_page = ?
+WHERE
+   id = ? RETURNING id, title, description, order_on_page
+`
+
+type unsafeUpdateGameSectionOrderParams struct {
+	OrderOnPage int64
+	ID          string
+}
+
+func (q *Queries) unsafeUpdateGameSectionOrder(ctx context.Context, arg unsafeUpdateGameSectionOrderParams) (GameSection, error) {
+	row := q.db.QueryRowContext(ctx, unsafeUpdateGameSectionOrder, arg.OrderOnPage, arg.ID)
+	var i GameSection
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.OrderOnPage,
+	)
 	return i, err
 }

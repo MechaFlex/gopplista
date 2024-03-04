@@ -1,36 +1,23 @@
-<ol
-   class="SECTIONS flex flex-col gap-6"
-   hx-put="/admin/games/sections"
-   hx-swap="outerHTML"
-   hx-trigger="end"
-   hx-include="input[name=section]"
->
-   {{range .Sections}}
-      <li class="SECTION flex flex-col p-2 b-solid b-2 b-zinc-900">
-         <input type="hidden" name="section" value="{{.ID}}" />
-         <div class="flex justify-between items-center cursor-ns-resize">
-            <h2>{{.Title}}</h2>
-            {{template "routes/admin/games/sectioncontrols" .}}
-         </div>
+<ol id="SECTIONS_LIST" class="flex flex-col gap-6">
+	{{range .Sections}}
+		<li class="SECTION flex flex-col p-2 b-solid b-2 b-zinc-900" data-section-id="{{.ID}}">
+			<div class="flex justify-between items-center cursor-grab active:cursor-grabbing">
+				<h2>{{.Title}}</h2>
+				{{template "routes/admin/games/menusection" .}}
+			</div>
 
-         <ol
-            class="GAMES"
-            hx-put="/admin/games/sections/games"
-            hx-trigger="end"
-            hx-target=".SECTIONS"
-            hx-swap="outerHTML"
-            hx-include="input[name=game]"
-         >
-            {{range .Games}}
-               <li
-                  class="flex justify-between items-center px-2 hover:bg-zinc-50 hover:text-zinc-800 cursor-ns-resize"
-               >
-                  <input type="hidden" name="game" value="{{.ID}}" />
-                  {{.Title}}
-                  {{template "routes/admin/games/gameinsectioncontrols" .}}
-               </li>
-            {{end}}
-         </ol>
-      </li>
-   {{end}}
+			{{$sectionID := .ID}}
+			<ol class="GAMES_IN_SECTION" data-section-id="{{.ID}}">
+				{{range .Games}}
+					<li
+						class="GAME_IN_SECTION flex justify-between items-center px-2 cursor-grab active:cursor-grabbing"
+						data-game-id="{{.ID}}"
+					>
+						{{.Title}}
+						{{template "routes/admin/games/menugameinsection" (printf "%s-%s" $sectionID .ID)}}
+					</li>
+				{{end}}
+			</ol>
+		</li>
+	{{end}}
 </ol>

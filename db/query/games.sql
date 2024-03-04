@@ -1,5 +1,5 @@
--- GAME SECTIONS
--- name: CreateGameSection :one
+-- GAME SECTIONS_LIST
+-- name: unsafeCreateGameSection :one
 INSERT INTO
    game_sections (title, description, order_on_page)
 VALUES
@@ -25,12 +25,18 @@ WHERE
 UPDATE game_sections
 SET
    title = ?,
-   description = ?,
+   description = ?
+WHERE
+   id = ? RETURNING *;
+
+-- name: unsafeUpdateGameSectionOrder :one
+UPDATE game_sections
+SET
    order_on_page = ?
 WHERE
    id = ? RETURNING *;
 
--- name: DeleteGameSection :one
+-- name: unsafeDeleteGameSection :one
 DELETE FROM game_sections
 WHERE
    id = ? RETURNING *;
@@ -61,7 +67,7 @@ SELECT
 FROM
    games
 ORDER BY
-   title;
+   title COLLATE NOCASE;
 
 -- name: GetGame :one
 SELECT
@@ -89,11 +95,19 @@ WHERE
    id = ? RETURNING *;
 
 -- GAME SECTION'S GAMES
--- name: AddGameToSection :one
+-- name: AddGameToGameSection :one
 INSERT INTO
    game_section_games (game_id, game_section_id, order_in_section)
 VALUES
    (?, ?, ?) RETURNING *;
+
+-- name: GetGameSectionGames :many
+SELECT
+   *
+FROM
+   game_section_games
+ORDER BY
+   order_in_section;
 
 -- name: GetGamesInGameSection :many
 SELECT
@@ -106,27 +120,13 @@ WHERE
 ORDER BY
    order_in_section;
 
--- name: GetAllGameSectionsWithGames :many
-SELECT
-   game_sections.*, sqlc.embed(games)
-FROM
-   game_sections
-   LEFT JOIN game_section_games ON game_sections.id = game_section_games.game_section_id
-   LEFT JOIN games ON game_section_games.game_id = games.id
-ORDER BY
-   game_sections.order_on_page,
-   game_section_games.order_in_section;
-
--- name: updateGameInSectionOrder :one
-UPDATE game_section_games
-SET
-   order_in_section = ?
-WHERE
-   game_id = ?
-   AND game_section_id = ? RETURNING *;
-
--- name: RemoveGameFromSection :one
+-- name: RemoveGameFromGameSection :one
 DELETE FROM game_section_games
 WHERE
-   game_id = ?
-   AND game_section_id = ? RETURNING *;
+   game_section_id = ?
+   AND game_id = ? RETURNING *;
+
+-- name: RemoveGamesFromGameSection :exec
+DELETE FROM game_section_games
+WHERE
+   game_section_id = ?;

@@ -5,10 +5,14 @@ import (
 	"gopplista/app/routes"
 	"gopplista/db"
 	"log"
+	"os"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+
 	"github.com/gofiber/template/html/v2"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
@@ -26,12 +30,25 @@ func main() {
 
 	f.Static("/", "./app/static")
 
-	app := f.Group("/")
-	routes.RegisterRoutes(app, database)
+	envIsDev := strings.HasPrefix(os.Getenv("ENV"), "dev")
+	if envIsDev {
+		log.Println("Environment is set to development")
+	}
 
 	f.Use(func(c *fiber.Ctx) error {
-		return c.Status(404).Render("routes/404", nil, "layouts/base")
+		c.Bind(fiber.Map{
+			"Development": envIsDev,
+		})
+		return c.Next()
 	})
 
-	log.Fatal(f.Listen("localhost:3333"))
+	routes.RegisterRoutes(f.Group("/"), database)
+
+	f.Use(func(c *fiber.Ctx) error {
+		return c.Status(404).Render("routes/404", fiber.Map{
+			"PageTitle": "404 | Jacob topplista",
+		}, "layouts/base")
+	})
+
+	log.Fatal(f.Listen("0.0.0.0:3333"))
 }
