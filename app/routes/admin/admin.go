@@ -77,8 +77,11 @@ func RegisterAdminRoutes(router fiber.Router, db dbpkg.Database) {
 		encryptedToken := token.V4Encrypt(pasetoKey, nil)
 
 		c.Cookie(&fiber.Cookie{
-			Name:  "admin",
-			Value: encryptedToken,
+			Name:     "admin",
+			Value:    encryptedToken,
+			Secure:   true,
+			HTTPOnly: true,
+			SameSite: "Strict",
 		})
 
 		return c.Status(200).SendString("Logged in")

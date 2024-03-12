@@ -1,19 +1,25 @@
 package main
 
 import (
-	_ "embed"
+	"embed"
 	"gopplista/app/routes"
 	"gopplista/db"
+	"io/fs"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 
 	"github.com/gofiber/template/html/v2"
 	_ "github.com/joho/godotenv/autoload"
 )
+
+//go:embed app/*
+var rootAppFS embed.FS
 
 func main() {
 	database, err := db.Init()
@@ -22,19 +28,20 @@ func main() {
 		return
 	}
 
+	appFS, err := fs.Sub(rootAppFS, "app")
+	if err != nil {
+		log.Fatal(err)
+	}
 	f := fiber.New(fiber.Config{
-		Views: html.New("./app", ".html"),
+		Views: html.NewFileSystem(http.FS(appFS), ".html"),
 	})
 
 	f.Use(logger.New())
-
-	f.Static("/", "./app/static")
 
 	envIsDev := strings.HasPrefix(os.Getenv("ENV"), "dev")
 	if envIsDev {
 		log.Println("Environment is set to development")
 	}
-
 	f.Use(func(c *fiber.Ctx) error {
 		c.Bind(fiber.Map{
 			"Development": envIsDev,
@@ -43,6 +50,11 @@ func main() {
 	})
 
 	routes.RegisterRoutes(f.Group("/"), database)
+
+	staticFS, _ := fs.Sub(rootAppFS, "app/static")
+	f.Use("/", filesystem.New(filesystem.Config{
+		Root: http.FS(staticFS),
+	}))
 
 	f.Use(func(c *fiber.Ctx) error {
 		return c.Status(404).Render("routes/404", fiber.Map{
