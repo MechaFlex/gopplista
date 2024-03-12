@@ -1,27 +1,26 @@
+# Gopplista
+
+Gopplista is a replacement for the Topplista I made in PHP during gymnasiet. 
+
+Gopplista uses Go, and the web server framework Fiber. (I like Fiber, even though Echo and the standard package seems more popular. Fiber has many features I like such as nested layouts.)
+
+On top of Go and the built in HTML templating in Go, HTMX is used for the frontend as well as some web components using Lit. 
+
+The frontend uses UnoCSS for styling.
+
+The database used is SQLite and sqlc is used to generate queries.
+
 ## Development
 
-First run `npm i` to install dev dependencies. This project uses UnoCSS and Prettier.
-
-Unocss runtime used for development, but be sure to run build when building to ship css directly.
+First run `npm i` to install dev dependencies for UnoCSS and Prettier.
 
 To develop with live reload, use Air. Install Air, then run `air`.
 
+Create a .env file in the root directory and add `ENV=dev` to it to use UnoCSS CDN. You will see a development box in the bottom left corner when in development.
+
 ## Building
-When building the go application needs to be built I guess
-We also want to compile the unocss to not constantly rely on the CDN.
 
-
-
-## Tech stack
-
-Server: Fiber
-Fiber is a bit controversial since it is not based on the regular Go net/http package, meaning it is not as compatible with middleware.
-For me this has not yet been an issue as I have not used any additional middleware.
-What I like about fiber is that nested layouts are supported out of the box.
-
-Database: SQLite and sqlc
-
-Go html templates with htmx and unocss.
+Once everything is ready the project can be built locally using the Makefile, as well as the Dockerfile. 
 
 ## Environment variables
 
@@ -31,12 +30,11 @@ SEED_DATABASE=true # if you want to populate the database with some predefined d
 ADMIN_PASSWORD=<password>
 ```
 
-## Learnings
+## What I've learned from this project
 
-SQLite is good for data storage, but the triggers and other tools are not as powerful as when using Postgres. This means the business logic has to live in the application code which isn't so bad.
+SQLite is good for data storage, but the triggers and other tools are not as powerful as when using Postgres. This means the business logic has to live in the application code, which isn't so bad after all.
 
-TODO: Create way to update an order for section. But needs to be controlled so overlap is avoided. Don't expose native?
+I've learned to set up and work with Go, and I like the language in general. I don't like the module structure, or I have just not figured it out yet, but I want to be able to nest my files more nicely.
 
-Fixed alot but takes time. 
+I've learned to create a Dockerfile with separate build steps. It's very convenient that you can simply run a binary with Go, very efficient.
 
-Need to not use delete but use update instead. Current setup seems to be glitchy for some reason...

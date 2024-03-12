@@ -82,6 +82,7 @@ func RegisterAdminRoutes(router fiber.Router, db dbpkg.Database) {
 			Secure:   true,
 			HTTPOnly: true,
 			SameSite: "Strict",
+			Expires:  time.Now().Add(24 * time.Hour),
 		})
 
 		return c.Status(200).SendString("Logged in")

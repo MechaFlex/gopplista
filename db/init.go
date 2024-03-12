@@ -20,7 +20,7 @@ type Database struct {
 func Init() (Database, error) {
 	ctx := context.Background()
 
-	database, err := sql.Open("sqlite", "db.sqlite")
+	database, err := sql.Open("sqlite", "sqlite/db.sqlite")
 	if err != nil {
 		return Database{}, err
 	}
