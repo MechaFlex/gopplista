@@ -1,4 +1,4 @@
-package admin
+package routes
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ func RegisterGameSectionRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting game sections with games: %v", err))
 		}
 
-		return c.Render("routes/admin/games/sectionslist", fiber.Map{
+		return c.Render("pages/admin/games/sectionslist", fiber.Map{
 			"Sections": gameSections,
 		})
 	})
@@ -38,7 +38,7 @@ func RegisterGameSectionRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting game sections with games: %v", err))
 		}
 
-		return c.Render("routes/admin/games/sectionslist", fiber.Map{
+		return c.Render("pages/admin/games/sectionslist", fiber.Map{
 			"Sections": updatedGameSections,
 		})
 	})
@@ -68,7 +68,7 @@ func RegisterGameSectionRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting game sections with games: %v", err))
 		}
 
-		return c.Render("routes/admin/games/sectionslist", fiber.Map{
+		return c.Render("pages/admin/games/sectionslist", fiber.Map{
 			"Sections": updatedGameSections,
 		})
 	})
@@ -90,7 +90,7 @@ func RegisterGameSectionRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting game sections with games: %v", err))
 		}
 
-		return c.Render("routes/admin/games/sectionslist", fiber.Map{
+		return c.Render("pages/admin/games/sectionslist", fiber.Map{
 			"Sections": updatedGameSections,
 		})
 	})
@@ -110,7 +110,7 @@ func RegisterGameSectionRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting game sections with games: %v", err))
 		}
 
-		return c.Render("routes/admin/games/sectionslist", fiber.Map{
+		return c.Render("pages/admin/games/sectionslist", fiber.Map{
 			"Sections": updatedGameSections,
 		})
 	})
@@ -155,7 +155,7 @@ func RegisterGameSectionRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting game sections with games: %v", err))
 		}
 
-		return c.Render("routes/admin/games/sectionslist", fiber.Map{
+		return c.Render("pages/admin/games/sectionslist", fiber.Map{
 			"Sections": updatedGameSections,
 		})
 	})
@@ -176,13 +176,13 @@ func RegisterGameSectionRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting game sections with games: %v", err))
 		}
 
-		return c.Render("routes/admin/games/sectionslist", fiber.Map{
+		return c.Render("pages/admin/games/sectionslist", fiber.Map{
 			"Sections": updatedGameSections,
 		})
 	})
 
 	router.Get("/dialog/add", func(c *fiber.Ctx) error {
-		return c.Render("routes/admin/games/dialogsection", fiber.Map{
+		return c.Render("pages/admin/games/dialogsection", fiber.Map{
 			"Edit": false,
 		})
 	})
@@ -194,7 +194,7 @@ func RegisterGameSectionRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting game section: %v", err))
 		}
 
-		return c.Render("routes/admin/games/dialogsection", fiber.Map{
+		return c.Render("pages/admin/games/dialogsection", fiber.Map{
 			"Edit":    true,
 			"Section": sectionToEdit,
 		})

@@ -1,4 +1,4 @@
-package admin
+package routes
 
 import (
 	"fmt"
@@ -36,7 +36,7 @@ func RegisterGamesGamesRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting games: %v", err))
 		}
 
-		return c.Render("routes/admin/games/gameslist", fiber.Map{
+		return c.Render("pages/admin/games/gameslist", fiber.Map{
 			"Games": allGames,
 		})
 	})
@@ -70,7 +70,9 @@ func RegisterGamesGamesRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting games: %v", err))
 		}
 
-		return c.Render("routes/admin/games/gameslist", fiber.Map{
+		c.Set("HX-Trigger", "game-updated")
+
+		return c.Render("pages/admin/games/gameslist", fiber.Map{
 			"Games": allGames,
 		})
 	})
@@ -87,13 +89,15 @@ func RegisterGamesGamesRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting games: %v", err))
 		}
 
-		return c.Render("routes/admin/games/gameslist", fiber.Map{
+		c.Set("HX-Trigger", "game-deleted")
+
+		return c.Render("pages/admin/games/gameslist", fiber.Map{
 			"Games": allGames,
 		})
 	})
 
 	router.Get("/dialog/add", func(c *fiber.Ctx) error {
-		return c.Render("routes/admin/games/dialoggame", fiber.Map{
+		return c.Render("pages/admin/games/dialoggame", fiber.Map{
 			"Edit": false,
 		})
 	})
@@ -105,7 +109,7 @@ func RegisterGamesGamesRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting game: %v", err))
 		}
 
-		return c.Render("routes/admin/games/dialoggame", fiber.Map{
+		return c.Render("pages/admin/games/dialoggame", fiber.Map{
 			"Edit": true,
 			"Game": gameToEdit,
 		})

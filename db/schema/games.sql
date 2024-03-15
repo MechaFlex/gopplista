@@ -1,5 +1,7 @@
 PRAGMA journal_mode = WAL;
 
+PRAGMA foreign_keys = ON;
+
 CREATE TABLE
    IF NOT EXISTS games (
       id TEXT NOT NULL PRIMARY KEY DEFAULT (HEX (RANDOMBLOB (8))),
@@ -25,6 +27,6 @@ CREATE TABLE
       game_id TEXT NOT NULL,
       order_in_section INT NOT NULL,
       PRIMARY KEY (game_section_id, game_id),
-      FOREIGN KEY (game_section_id) REFERENCES game_sections (id),
-      FOREIGN KEY (game_id) REFERENCES games (id)
+      FOREIGN KEY (game_section_id) REFERENCES game_sections (id) ON DELETE CASCADE,
+      FOREIGN KEY (game_id) REFERENCES games (id) ON DELETE CASCADE
    );

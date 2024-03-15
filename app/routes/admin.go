@@ -1,8 +1,7 @@
-package admin
+package routes
 
 import (
 	"fmt"
-	games "gopplista/app/routes/admin/games"
 	dbpkg "gopplista/db"
 	"os"
 	"time"
@@ -40,8 +39,8 @@ func RegisterAdminRoutes(router fiber.Router, db dbpkg.Database) {
 		return c.Next()
 	})
 
-	games.RegisterGameSectionRoutes(router.Group("/games/sections"), db) //Put before to prioritize specifics over dynamics
-	games.RegisterGamesGamesRoutes(router.Group("/games"), db)
+	RegisterGameSectionRoutes(router.Group("/games/sections"), db) //Put before to prioritize specifics over dynamics
+	RegisterGamesGamesRoutes(router.Group("/games"), db)
 
 	router.Get("/", func(c *fiber.Ctx) error {
 
@@ -55,14 +54,14 @@ func RegisterAdminRoutes(router fiber.Router, db dbpkg.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting games: %v", err))
 		}
 
-		return c.Render("routes/admin/index", fiber.Map{
+		return c.Render("pages/admin/index", fiber.Map{
 			"Sections": gameSections,
 			"Games":    allGames,
 		}, "layouts/admin", "layouts/base")
 	})
 
 	router.Get("/login", func(c *fiber.Ctx) error {
-		return c.Render("routes/admin/login", nil, "layouts/base")
+		return c.Render("pages/admin/login", nil, "layouts/base")
 	})
 
 	router.Post("/login", func(c *fiber.Ctx) error {

@@ -22,13 +22,15 @@ import (
 var rootAppFS embed.FS
 
 func main() {
+	// Initialize database
 	database, err := db.Init()
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	appFS, err := fs.Sub(rootAppFS, "app")
+	// Initialize Fiber app with templates
+	appFS, err := fs.Sub(rootAppFS, "app/templates")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,8 +38,7 @@ func main() {
 		Views: html.NewFileSystem(http.FS(appFS), ".html"),
 	})
 
-	f.Use(logger.New())
-
+	// Things that should happen before every request
 	envIsDev := strings.HasPrefix(os.Getenv("ENV"), "dev")
 	if envIsDev {
 		log.Println("Environment is set to development")
@@ -49,15 +50,20 @@ func main() {
 		return c.Next()
 	})
 
+	f.Use(logger.New())
+
+	// Register routes, main part of the app
 	routes.RegisterRoutes(f.Group("/"), database)
 
+	// Serve static files
 	staticFS, _ := fs.Sub(rootAppFS, "app/static")
 	f.Use("/", filesystem.New(filesystem.Config{
 		Root: http.FS(staticFS),
 	}))
 
+	// If no route matches this is the catch all fallback
 	f.Use(func(c *fiber.Ctx) error {
-		return c.Status(404).Render("routes/404", fiber.Map{
+		return c.Status(404).Render("pages/404", fiber.Map{
 			"PageTitle": "404 | Jacob topplista",
 		}, "layouts/base")
 	})

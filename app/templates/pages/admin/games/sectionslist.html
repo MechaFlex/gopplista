@@ -1,9 +1,15 @@
-<ol id="SECTIONS_LIST" class="flex flex-col gap-6">
+<ol
+	id="SECTIONS_LIST"
+	class="flex flex-col gap-6"
+	hx-get="/admin/games/sections"
+	hx-swap="outerHTML"
+	hx-trigger="game-updated from:body, game-deleted from:body"
+>
 	{{range .Sections}}
 		<li class="SECTION flex flex-col p-2 b-solid b-2 b-zinc-900" data-section-id="{{.ID}}">
 			<div class="flex justify-between items-center cursor-grab active:cursor-grabbing">
 				<h2>{{.Title}}</h2>
-				{{template "routes/admin/games/menusection" .}}
+				{{template "pages/admin/games/menusection" .}}
 			</div>
 
 			{{$sectionID := .ID}}
@@ -14,7 +20,7 @@
 						data-game-id="{{.ID}}"
 					>
 						{{.Title}}
-						{{template "routes/admin/games/menugameinsection" (printf "%s-%s" $sectionID .ID)}}
+						{{template "pages/admin/games/menugameinsection" (printf "%s-%s" $sectionID .ID)}}
 					</li>
 				{{end}}
 			</ol>

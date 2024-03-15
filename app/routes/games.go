@@ -1,4 +1,4 @@
-package games
+package routes
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ func RegisterGameRoutes(router fiber.Router, db db.Database) {
 			return c.Status(500).SendString(fmt.Sprintf("Error getting game sections with games: %v", err))
 		}
 
-		return c.Render("routes/games/games", fiber.Map{
+		return c.Render("pages/games/games", fiber.Map{
 			"PageTitle": "Spel | Jacobs topplista",
 			"Sections":  gameSectionsWithGames,
 		}, "layouts/main", "layouts/base")
