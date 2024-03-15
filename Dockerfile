@@ -19,6 +19,6 @@ FROM scratch
 WORKDIR /app
 COPY --from=build /app/gopplista /app/gopplista
 COPY --from=build /app/sqlite /app/sqlite
-VOLUME /app/sqlite
+# VOLUME /app/sqlite
 EXPOSE 3333
 CMD ["./gopplista"]
