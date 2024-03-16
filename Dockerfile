@@ -1,5 +1,5 @@
 # First build JS, bascially just compiling the CSS
-FROM node:20-alpine as npm
+FROM node as npm
 WORKDIR /app
 COPY . .
 RUN npm config set registry http://registry.npmjs.org/
@@ -7,7 +7,7 @@ RUN npm install
 RUN npm run build
 
 # Then build the Go binary
-FROM golang:1.22-alpine as build
+FROM golang:1.22 as build
 WORKDIR /app
 COPY --from=npm /app /app
 ENV CGO_ENABLED=0
