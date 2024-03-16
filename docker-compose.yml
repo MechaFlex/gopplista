@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  gopplista:
+    restart: always
+    image: ghcr.io/mechaflex/gopplista:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bingo.rule=Host(`gopplista.drake.ee`)"
+      - "traefik.http.services.bingo.loadbalancer.server.port=3333"
+      - "traefik.http.routers.bingo.entrypoints=websecure"
+      - "traefik.http.routers.bingo.tls.certresolver=myresolver"
+    env:
+      # - ADMIN_PASSWORD=<password> # will be set directly in portainer
+      # - SEED_DATABASE=true 
+      # - ENV=dev
+    volumes:
+      - gopplista-db:/app/sqlite
+
+volumes:
+  gopplista-db:
