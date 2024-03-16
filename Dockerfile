@@ -1,14 +1,14 @@
 # First build JS, bascially just compiling the CSS
-FROM node:20-alpine as bun
+FROM node:20-alpine as npm
 WORKDIR /app
 COPY . .
-RUN bun install
-RUN bun run build
+RUN npm install
+RUN npm run build
 
 # Then build the Go binary
 FROM golang:1.22-alpine as build
 WORKDIR /app
-COPY --from=bun /app /app
+COPY --from=npm /app /app
 ENV CGO_ENABLED=0
 RUN go mod download
 RUN go build
