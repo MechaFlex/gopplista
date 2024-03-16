@@ -1,5 +1,5 @@
 # First build JS, bascially just compiling the CSS
-FROM oven/bun:1.0-alpine as bun
+FROM node:20-alpine as bun
 WORKDIR /app
 COPY . .
 RUN bun install
