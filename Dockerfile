@@ -1,8 +1,7 @@
 # First build JS, bascially just compiling the CSS
-FROM node as npm
+FROM node:20 as npm
 WORKDIR /app
 COPY . .
-RUN npm config set registry http://registry.npmjs.org/
 RUN npm install
 RUN npm run build
 
