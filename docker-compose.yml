@@ -9,7 +9,7 @@ services:
       - "traefik.http.services.bingo.loadbalancer.server.port=3333"
       - "traefik.http.routers.bingo.entrypoints=websecure"
       - "traefik.http.routers.bingo.tls.certresolver=myresolver"
-    env:
+    # env:
       # - ADMIN_PASSWORD=<password> # will be set directly in portainer
       # - SEED_DATABASE=true 
       # - ENV=dev
