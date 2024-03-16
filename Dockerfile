@@ -2,6 +2,7 @@
 FROM node:20-alpine as npm
 WORKDIR /app
 COPY . .
+RUN npm config set registry http://registry.npmjs.org/
 RUN npm install
 RUN npm run build
 
