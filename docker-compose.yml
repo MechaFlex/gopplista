@@ -2,7 +2,7 @@ version: "3.8"
 services:
   gopplista:
     restart: always
-    image: ghcr.io/mechaflex/gopplista:latest
+    image: ghcr.io/drakejacob/gopplista:latest
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.bingo.rule=Host(`gopplista.drake.ee`)"
