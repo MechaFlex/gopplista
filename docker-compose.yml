@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 services:
   gopplista:
     restart: always
@@ -13,6 +13,8 @@ services:
       # - ADMIN_PASSWORD=<password> # will be set directly in portainer
       # - SEED_DATABASE=true 
       # - ENV=dev
+    env_file:
+      - stack.env
     volumes:
       - gopplista-db:/app/sqlite
 
